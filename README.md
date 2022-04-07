@@ -9,6 +9,7 @@ This repository is used to host supplementary files for the research article, 'E
 
 The repository contains both data and code files. Data files are in csv format. Code is in either R or Jupyter Notebook for Python file type. 
 
+The data files contain information about 608 GitHub repos sampled from a data set that was collected from the GitHub API in 2017. The data variables in each file were computed at the repo level. No individual user data is included in these files. The repos represented in this data set were created in January 2016. The data have been aggregated over a period of 13 months. 
 
 ### Data
 
@@ -21,6 +22,8 @@ gh_teams_research_EveryBOTy-counts.csv
 
 ### Code
 
+RepoFeatureExtraction.py
+* Contains code for the extraction and calculation of productivity measures reported in our publication (data file is not included in this repo due to data sharing constraints).
 
 Expertise.ipynb
 * Contains code for smart sampling algorithm developed by Saadat and Sukthankar (2020).
