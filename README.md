@@ -27,7 +27,8 @@ following | The numbers of users followed by all human users in the repo (cumula
 public_repos | The numbers of repos owned by all human users in the repo (cumulative) |
 gh_impact | A quantitative measure of influence based on the stars a repo receives (an account has a gh-impact score of n if they have n projects with n stars", https://github.com/iandennismiller/gh-impact) for all human users in the repo (cumulative) |
 
-gh_teams_research_EveryBOTy-counts.csv
+
+#### gh_teams_research_EveryBOTy-counts.csv
 * Contains the data used as input for gh_teams_research_analysis.R
 
 | Variable  | Description | 
@@ -54,13 +55,15 @@ gh_teams_research_EveryBOTy-counts.csv
 
 ### Code
 
-RepoFeatureExtraction.py
+#### RepoFeatureExtraction.py
 * Contains code for the extraction and calculation of productivity measures reported in our publication (data file is not included in this repo due to data sharing constraints).
 
-Expertise.ipynb
+
+#### Expertise.ipynb
 * Contains code for smart sampling algorithm developed by Saadat and Sukthankar (2020).
 
-gh_teams_research_analysis.R
+
+#### gh_teams_research_analysis.R
 * Contains code for statistical modeling of variable relationships reported in our publication. 
 
 ## References
