@@ -1,12 +1,5 @@
-from nltk.corpus import stopwords
-from nltk.stem.wordnet import WordNetLemmatizer
-import string
-import re
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import datetime
 import pandas as pd
-from elasticsearch import Elasticsearch
-from elasticsearch_dsl import Search
 import os
 import numpy as np
 from scipy.stats.stats import pearsonr
@@ -16,11 +9,10 @@ from lifelines.utils import survival_table_from_events
 from lifelines import KaplanMeierFitter
 from pysal.inequality import gini
 
-exp_dir = "/home/social-sim/SocialSim/Team/exp"
+exp_dir = " "
 if not os.path.isdir(exp_dir):
     os.mkdir(exp_dir)
 
-es = Elasticsearch(['10.0.0.100'], port=9200, timeout=600.0)
 six_months = 6 * (365 / 12)
 
 # work_events = ['PushEvent', 'PullRequestEvent', 'IssueCommentEvent', 'PullRequestReviewCommentEvent']
@@ -82,32 +74,6 @@ def extract_all_events_features(first_6m_file, event_features_file):
     df[feature_columns].to_csv(event_features_file)
 
 
-def extract_repos_burstiness(active_repo_ids, detailed_events_file, cur_dir, feature_name):
-    df = pd.read_csv(detailed_events_file)
-    df = df[df.name_h.isin(active_repo_ids)]
-    grouped = df.groupby('name_h')
-    res_df = grouped.apply(calculate_burstiness)
-    res_df.drop_duplicates('name_h', inplace=True)
-
-    f = "%s/%s.csv" % (cur_dir, 'formation_burstiness')
-    res_df[['name_h', feature_name]].to_csv(f, index=False)
-
-
-def calculate_burstiness(df):
-    # df = df[(df.type == 'IssueCommentEvent') | (df.type == 'PullRequestReviewCommentEvent')]
-    df['created_at'] = pd.to_datetime(df['created_at'])
-    df = df.sort_values(by='created_at')
-
-    delta = df['created_at'].diff()
-    delta_min = [i // 60 for i in delta.dt.seconds.tolist()]
-
-    sd = np.std(delta_min[1:])
-    m = np.mean(delta_min[1:])
-    burstiness = (sd - m) / (sd + m)
-    df['burstiness'] = burstiness
-    return df
-
-
 def extract_repos_issue_labels(active_repo_ids, cur_day, cur_dir):
     # , feature_name = ['prop_labeled_issues', 'prop_bug_label']
     end_time = cur_day + datetime.timedelta(days=six_months)
@@ -159,71 +125,6 @@ def calc_labeled_issues_prop(df):
     # print(labeled_issues_prop, bug_count / all_issues)
 
     return df
-
-
-def extract_repos_comment_feature(active_repo_ids, cur_day, cur_dir):
-    end_time = cur_day + datetime.timedelta(days=six_months)
-    s = Search(using=es, index='events')
-    start_time = cur_day.strftime("%Y-%m-%d") + "T00:00:00Z"
-    end_time = end_time.strftime("%Y-%m-%d") + "T00:00:00Z"
-    print(start_time, end_time)
-    s = s.filter("range", **{'created_at': {
-        'gte': start_time,
-        'lt': end_time
-    }})
-    s = s.filter('terms', **{'repo.name_h.keyword': active_repo_ids})
-    s = s.query('match', type="IssueCommentEvent CommitCommentEvent PullRequestReviewCommentEvent")
-    s = s.query('match_all')
-    s = s.source(['repo.name_h', 'payload.comment.body_m'])
-
-    response = s.execute()
-    print(response.hits.total)
-
-    df = pd.DataFrame((d.to_dict() for d in s.scan()))
-    df = pd.concat([df.drop(["repo"], axis=1), df["repo"].apply(pd.Series)], axis=1)
-    df = pd.concat([df.drop(["payload"], axis=1), df["payload"].apply(pd.Series)], axis=1)
-    df = pd.concat([df.drop(["comment"], axis=1), df["comment"].apply(pd.Series)], axis=1)
-
-    df.to_csv(cur_dir + "/formation_all_comments_text.csv", index=False)
-
-    grouped = df.groupby('name_h')
-    res_df = grouped.apply(comment_features)
-    res_df.drop_duplicates('name_h', inplace=True)
-
-    f = "%s/%s.csv" % (cur_dir, 'formation_comments')
-    res_df[['name_h', 'prop_pos_comments', 'prop_neg_comments', 'prop_thank_comments',
-            'avg_comment_len', 'prop_positive_word_comments', 'prop_regret_word_comments']].to_csv(f, index=False)
-
-
-def comment_features(df):
-    sentiment_analyzer = SentimentIntensityAnalyzer()
-    df['sentiment'] = df['body_m'].apply(lambda x: sentiment_analyzer.polarity_scores(x))
-    df = pd.concat([df.drop(["sentiment"], axis=1), df["sentiment"].apply(pd.Series)], axis=1)
-    df['comment_len'] = df['body_m'].apply(lambda x: count_words(x))
-
-    comments_count = df.shape[0]
-    df['prop_pos_comments'] = (df.pos > 0).sum() / comments_count
-    df['prop_neg_comments'] = (df.neg > 0).sum() / comments_count
-    df['prop_thank_comments'] = (df.body_m.str.contains('thank')).sum() / comments_count
-    df['avg_comment_len'] = df['comment_len'].mean()
-
-    positive_words = ['help', 'feedback', 'appreciate', 'respect', 'grateful', 'please']
-    df['prop_positive_word_comments'] = (df.body_m.str.contains('|'.join(positive_words))).sum() / comments_count
-    regret_words = ['sorry', 'apologize', 'forgive']
-    df['prop_regret_word_comments'] = (df.body_m.str.contains('|'.join(regret_words))).sum() / comments_count
-
-    return df
-
-
-stop = set(stopwords.words('english'))
-exclude = set(string.punctuation)
-lemma = WordNetLemmatizer()
-def count_words(text):
-    stop_free = " ".join([i for i in text.lower().split() if i not in stop])
-    punc_free = ''.join(ch for ch in stop_free if ch not in exclude)
-    normalized = " ".join(lemma.lemmatize(word) for word in punc_free.split())
-    words = normalized.split()
-    return len(words)
 
 
 def extract_issue_closure_rate(active_teams_ids, cur_day, cur_dir):
@@ -349,45 +250,3 @@ def calc_gini(df):
     gini_obj = gini.Gini(work_list)
     df['eval_gini'] = gini_obj.g
     return df
-
-
-if __name__ == '__main__':
-    #
-    # first_6m_file = "%s/first_6m_Jan.csv" % exp_dir
-    # performance_1m_file = "%s/performance_1m_Jan.csv" % exp_dir
-    #
-    # event_features_file = "%s/all_event_features_first_6m_Jan.csv" % exp_dir
-    # # extract_all_events_features(first_6m_file, event_features_file)
-    #
-    # feature_vectors_file = "%s/feature_vectors_first_6m_Jan.csv" % exp_dir
-    # # concat_performance_and_features(event_features_file, performance_1m_file, feature_vectors_file)
-
-    cur_day = datetime.datetime(2016, 1, 1)
-    end_day = datetime.datetime(2016, 1, 31)
-    while cur_day <= end_day:
-        print(cur_day)
-        cur_dir = "%s/created_%s" % (exp_dir, cur_day.strftime("%Y-%m-%d"))
-        detailed_events_file = "%s/6months_detailed_events.csv" % cur_dir
-        # active_repos_agg_events_file = "%s/active_repos_6months_aggregated_events.csv" % cur_dir
-        # active_repo_ids = pd.read_csv(active_repos_agg_events_file)['name_h'].tolist()
-        active_teams_file = "%s/formation_team_size_and_features.csv" % cur_dir
-        active_teams_ids = pd.read_csv(active_teams_file)['name_h'].tolist()
-        # team_members_file = "%s/_team_members.csv" % cur_dir
-
-        # extract_repos_burstiness(active_teams_ids, detailed_events_file, cur_dir, feature_name='burstiness')
-        # extract_repos_issue_labels(active_teams_ids, cur_day, cur_dir)
-        # extract_repos_comment_feature(active_teams_ids, cur_day, cur_dir)
-        extract_issue_closure_rate(active_teams_ids, cur_day, cur_dir)
-        # all_events_per_person(active_teams_file, cur_dir)
-        # work_events_to_work_ratio(active_teams_ids, cur_dir)
-        #### extract_labor_division(team_members_file, detailed_events_file)
-        # extract_gini(cur_dir)
-
-        cur_day += datetime.timedelta(days=1)
-
-    aggregate_feature(feature_name='eval_issue_closure_and_count')
-    # add_feature(feature_name='events_per_person')
-
-    # add_feature(feature_name='formation_issue_label')
-    # add_feature(feature_name='formation_comments')
-    # add_feature(feature_name='formation_burstiness')
