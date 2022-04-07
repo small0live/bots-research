@@ -21,7 +21,7 @@ gh_teams_research_EveryBOTy-counts.csv
 * Contains the data used as input for gh_teams_research_analysis.R
 
 | Variable Name  | Variable Description | 
-| :------------ |:---------------:|
+| :------------ |:---------------|
 | name_h | Alphanumeric hash generated to anonymize repo name |
 | Team type |  A qualitative descriptor indicating whether the team was made of only humans or a blend of humans and bots (two levels: human, human-bot) |
 | Team size |  A qualitative descriptor indicating the size of the team, derived from human_members_count (three levels: small [2, 3], medium [4, 6], large [7, 246]) |
