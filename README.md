@@ -1,4 +1,5 @@
-# Human-bot Teams in GitHub: Research Article Supplement
+# Human-bot Teams in GitHub: 
+# Research Article Supplement
 
 ## Purpose
 
