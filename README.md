@@ -10,7 +10,7 @@ This repository is used to host supplementary files for the research article, 'E
 The repository contains both data and code files. Data files are in csv format. Code is in either R or Jupyter Notebook for Python file type. 
 
 
-Data
+### Data
 
 
 team_expertise_info_raw.csv
@@ -19,7 +19,7 @@ team_expertise_info_raw.csv
 gh_teams_research_EveryBOTy-counts.csv
 * Contains the data used as input for gh_teams_research_analysis.R
 
-Code
+### Code
 
 
 Expertise.ipynb
