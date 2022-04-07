@@ -11,6 +11,8 @@ The repository contains both data and code files. Data files are in csv format. 
 
 
 Data
+
+
 team_expertise_info_raw.csv
 * Contains the data used as input for Expertise.ipynb
 
@@ -18,6 +20,8 @@ gh_teams_research_EveryBOTy-counts.csv
 * Contains the data used as input for gh_teams_research_analysis.R
 
 Code
+
+
 Expertise.ipynb
 * Contains code for smart sampling algorithm developed by Saadat and Sukthankar (2020).
 
