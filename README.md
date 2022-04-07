@@ -15,7 +15,7 @@ The data files contain information about 608 GitHub repos sampled from a data se
 ### Data
 
 
-team_expertise_info_raw.csv
+#### team_expertise_info_raw.csv
 * Contains the data used as input for Expertise.ipynb
 
 | Variable  | Description | 
