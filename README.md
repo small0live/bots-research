@@ -30,7 +30,7 @@ gh_teams_research_analysis.R
 
 ## References
 
-Saadat, S., & Sukthankar, G. (2020). Explaining Differences in Classes of Discrete Sequences. ArXiv:2011.03371 [Cs]. http://arxiv.org/abs/2011.03371[http://arxiv.org/abs/2011.03371]
+Saadat, S., & Sukthankar, G. (2020). Explaining Differences in Classes of Discrete Sequences. ArXiv:2011.03371 [Cs]. http://arxiv.org/abs/2011.03371
 
 ## Citation
 
