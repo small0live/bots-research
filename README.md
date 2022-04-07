@@ -8,7 +8,7 @@ This repository is used to host supplementary files for the research article, 'E
 
 ## Contents
 
-The repository contains both data and code files. Data files are in csv format. Code is in either R or Jupyter Notebook for Python file type. 
+The repository contains both data and code files. Data files are in csv format. Code is in R, Python, and Jupyter Notebook for Python files. 
 
 The data files contain information about 608 GitHub repos sampled from a data set that was collected from the GitHub API in 2017. The data variables in each file were computed at the repo level. No individual user data is included in these files. The repos represented in this data set were created in January 2016. The data have been aggregated over a period of 13 months. 
 
