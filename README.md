@@ -64,7 +64,7 @@ gh_impact | A quantitative measure of influence based on the stars a repo receiv
 
 
 #### gh_teams_research_analysis.R
-* Contains code for statistical modeling of variable relationships reported in our publication. 
+* Contains code for statistical modeling and visualization of variable relationships reported in our publication. 
 
 ## References
 
