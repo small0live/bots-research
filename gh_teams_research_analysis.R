@@ -1,7 +1,7 @@
-## TopiCS SI Submission
+## TopiCS SI Article
 ## EveryBOTy Counts
 ## Created September 2019
-## Updated December 2021
+## Updated April 2022
 
 
 # Load Packages -----------------------------------------------------------
