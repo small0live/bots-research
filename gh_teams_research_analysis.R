@@ -117,16 +117,6 @@ humanWork.counts <- humanWork %>%
 #  geom_density() +
 #  geom_rug() 
 
-## distribution of gini in ~21k teams (sample before smart sampling to control for expertise)
-#median(ks$human_gini)
-#round(sd(ks$human_gini), 3)
-#
-#round(quantile(ks$human_gini, c(0.025, 0.975)), 3)
-#
-#ggplot(ks, aes(x = human_gini)) +
-#  geom_density() +
-#  geom_rug() 
-
 
 # Inspect and Prep Bot Work Event Data ------------------------------------
 
@@ -144,12 +134,11 @@ botWork <- df %>%
 
 botWork.counts <- botWork %>%
   group_by(Team_size_class) %>%
-  summarise(
-    Push = sum(bot_Push),
-    `Issue Comment` = sum(bot_IssueComments),
-    `PR Review Comment` = sum(bot_PRReviewComment),
-    `Merged PR` = sum(bot_MergedPR)
-    )
+  summarise(Push = sum(bot_Push),
+            `Issue Comment` = sum(bot_IssueComments),
+            `PR Review Comment` = sum(bot_PRReviewComment),
+            `Merged PR` = sum(bot_MergedPR)
+            )
 
 
 botWork.longformat <- melt(botWork.counts,
@@ -194,12 +183,14 @@ ggplot(botWork.longformat,
            )) +
   geom_bar(color = "black",
            position = "dodge", 
-           stat = "identity") +
+           stat = "identity"
+           ) +
   geom_text(aes(label = Count),
             position = position_dodge(width = 0.9),
             hjust = 0.5,
             vjust = -0.3,
-            family = "Times") +
+            family = "Times"
+            ) +
   scale_fill_brewer(palette = "Paired") +
   ggtitle(label = "Work Events Completed by Bots") +
   labs(fill = "Team Size") +
@@ -215,7 +206,7 @@ ggplot(botWork.longformat,
     panel.grid.minor.y = element_line(color = "gray95"),
     panel.grid.major.y = element_line(color = "gray95"),
     panel.grid.major.x = element_line(color = "gray95")
-  )
+    )
 dev.off()
 
 # Create Color Palette ----------------------------------------------------
@@ -233,10 +224,12 @@ png(filename = "figure3_productivity-by-Type+Size.png",
 ggplot(df, 
        aes(x = Team_size_class, 
            y = log_productivity, 
-           fill = Team_type)) +
+           fill = Team_type
+           )) +
   geom_boxplot(notch = T) +
   scale_fill_manual(values = cols, 
-                    labels = c("Human", "Human-Bot")) +
+                    labels = c("Human", "Human-Bot"
+                               )) +
   ggtitle(label = "Team Productivity Differences") +
   xlab("Team Size") +
   ylab("Log Transformed Work per Person") +
@@ -245,7 +238,8 @@ ggplot(df,
               xmin = c(0.8, 1.8, 2.8), xmax = c(1.2, 2.2, 3.2),
               annotation = c("p < .001", "p < .001", "p < .001"), 
               tip_length = 0.025,
-              family = "Times") +
+              family = "Times"
+              ) +
   theme(
     text = element_text(size = 9, family = "Times"),
     axis.text = element_text(size = 9),
@@ -258,7 +252,7 @@ ggplot(df,
     panel.grid.minor.y = element_line(color = "gray95"),
     panel.grid.major.y = element_line(color = "gray95"),
     panel.grid.major.x = element_line(color = "gray95")
-  )
+    )
 dev.off()
 
 
@@ -271,10 +265,12 @@ png(filename = "figure4_gini-by-Type+Size.png",
 ggplot(df, 
        aes(x = Team_size_class, 
            y = human_gini, 
-           fill = Team_type)) +
+           fill = Team_type
+           )) +
   geom_boxplot(notch = T) +
   scale_fill_manual(values = cols, 
-                    labels = c("Human", "Human-Bot")) +
+                    labels = c("Human", "Human-Bot"
+                               )) +
   ggtitle(label = "Work Centralization Differences") +
   xlab("Team Size") +
   ylab("Gini Coefficient") +
@@ -283,7 +279,8 @@ ggplot(df,
               xmin = c(0.8, 1.8), xmax = c(1.2, 2.2),
               annotation = c("p = .004", "p = .008"), 
               tip_length = 0.025,
-              family = "Times") +
+              family = "Times"
+              ) +
   ylim(0, 1) +
   theme(
     text = element_text(size = 9, family = "Times"),
@@ -293,11 +290,11 @@ ggplot(df,
     legend.direction = "horizontal",
     legend.text = element_text(size= 9 ),
     legend.background = element_rect(color = "gray80"),
-    panel.background=element_rect(fill = "white", color = "gray80"),
-    panel.grid.minor.y=element_line(color="gray95"),
-    panel.grid.major.y=element_line(color="gray95"),
-    panel.grid.major.x=element_line(color="gray95")
-  )
+    panel.background = element_rect(fill = "white", color = "gray80"),
+    panel.grid.minor.y = element_line(color = "gray95"),
+    panel.grid.major.y = element_line(color = "gray95"),
+    panel.grid.major.x = element_line(color = "gray95")
+    )
 dev.off()
 
 
@@ -317,12 +314,15 @@ png(filename = "figure5_efficiency-by-Type+Size.png",
 ggplot(df.efficiency, 
        aes(x = Team_size_class, 
            y = sqrt_efficiency, 
-           fill = Team_type)) +
+           fill = Team_type
+           )) +
   geom_boxplot(notch = T) +
   scale_fill_manual(values = cols, 
-                    labels = c("Human", "Human-Bot")) +
+                    labels = c("Human", "Human-Bot")
+                    ) +
   ggtitle(label = "Work Efficiency Differences",
-          subtitle = "Issue Resolution Time") +
+          subtitle = "Issue Resolution Time"
+          ) +
   xlab("Team Size") +
   ylab("Square Root Transformed \nMedian Number of Days") +
   labs(fill = "Team Type") +
@@ -334,13 +334,13 @@ ggplot(df.efficiency,
     axis.ticks.x = element_blank(),
     legend.position = c(0.788, 1),
     legend.direction = "horizontal",
-    legend.text = element_text(size= 9 ),
+    legend.text = element_text(size = 9 ),
     legend.background = element_rect(color = "gray80"),
     panel.background = element_rect(fill = "white", color = "gray80"),
     panel.grid.minor.y = element_line(color = "gray95"),
     panel.grid.major.y = element_line(color = "gray95"),
     panel.grid.major.x = element_line(color = "gray95")
-  )
+    )
 dev.off()
 
 
@@ -366,7 +366,7 @@ large.df <- df %>%
 t.test(log_productivity ~ Team_type,
        data = small.df,
        var.equal = F) 
-# t = 4.8087, df = 242.69, p-value = 2.668e-06 // adjsuted 5.335410e-06
+# t = 4.8087, df = 242.69, p-value = 2.668e-06 // adjusted 5.335410e-06
 
 #  mean in group human mean in group human-bot 
 #    3.296804                3.863217 
@@ -393,7 +393,8 @@ t.test(log_productivity ~ Team_type,
 out <- do.call("rbind", 
                lapply(split(df, df$Team_size_class), 
                       function(x) t.test(log_productivity~Team_type, var.equal = F,
-                                         conf.level = 0.95, x)$p.value))
+                                         conf.level = 0.95, x)$p.value)
+               )
 
 length(which(out < 0.05))
 
@@ -445,7 +446,9 @@ with(large.df, sd(human_gini[Team_type == "human-bot"]))
 out <- do.call("rbind", 
                lapply(split(df, df$Team_size_class), 
                       function(x) t.test(human_gini~Team_type,var.equal = F,
-                                         conf.level = 0.95, x)$p.value))
+                                         conf.level = 0.95, x)$p.value)
+               )
+
 length(which(out < 0.05))
 
 p.adjust(out, method = "holm")
@@ -455,8 +458,10 @@ p.adjust(out, method = "holm")
 
 small.efficiency <- df.efficiency %>%
   subset(Team_size_class == "Small")
+
 med.efficiency <- df.efficiency %>%
   subset(Team_size_class == "Medium")
+
 large.efficiency <- df.efficiency %>%
   subset(Team_size_class == "Large")
 
@@ -480,7 +485,9 @@ with(large.efficiency, median(sqrt_efficiency[Team_type == "human-bot"]))
 out <- do.call("rbind", 
                lapply(split(df.efficiency, df.efficiency$Team_size_class), 
                       function(x) wilcox.test(sqrt_efficiency~Team_type,
-                                         conf.level = 0.95, x)$p.value))
+                                         conf.level = 0.95, x)$p.value)
+               )
+
 length(which(out < 0.05))
 
 p.adjust(out, method = "holm")
